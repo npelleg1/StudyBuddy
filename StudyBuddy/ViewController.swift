@@ -232,7 +232,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let refHandle = geoFireRef.child("Messages/"+self.buddyID).observe(FIRDataEventType.value, with: { (snapshot) in
             let postDict = snapshot.value as? [String : String] ?? [:]
             if postDict.count > 0{
-                let newMessage = Message(buddyName: postDict["sentFrom"]!, message: postDict["messages"]!)
+                let newMessage = Message(buddyImage: postDict["sentFrom"]!, message: postDict["messages"]!)
                 self.messages.append(newMessage)
             }
         })

@@ -64,11 +64,11 @@ extension MessageViewController: UITableViewDataSource {
 
 class MessageCell: UITableViewCell{
     
-    @IBOutlet weak var buddyName: UILabel!
+    @IBOutlet weak var buddyImage: UIImageView!
     @IBOutlet weak var buddyMessage: UILabel!
     
     func configureForMessage(_ message: Message){
-        buddyName.text = message.buddyName
+        buddyImage.image = UIImage(named: "black_boat.png")
         buddyMessage.text = message.message
     }
 }

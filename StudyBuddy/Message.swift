@@ -10,11 +10,11 @@ import UIKit
 
 class Message {
     
-    let buddyName: String
+    let buddyImage: String
     let message: String
     
-    init(buddyName: String, message: String) {
-        self.buddyName = buddyName
+    init(buddyImage: String, message: String) {
+        self.buddyImage = buddyImage
         self.message = message
     }
     
