@@ -7,16 +7,37 @@
 //
 
 import UIKit
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var buddyID: Int = 0
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        FIRApp.configure()
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        
+        let containerViewController = ContainerViewController()
+        
+        window!.rootViewController = containerViewController
+        window!.makeKeyAndVisible()
+        
+        let defaults = UserDefaults.standard
+        
+        let userID = "userID"
+        
+        if defaults.integer(forKey: userID) == 0{
+            buddyID = Int(arc4random_uniform(1024))
+            defaults.set(buddyID, forKey: userID)
+        }else{
+            buddyID = defaults.integer(forKey: userID)
+        }
+        
         return true
+        
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
