@@ -44,6 +44,17 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         checkInButton.layer.cornerRadius = 25
         
         buddyID = "\(self.appDelegate.buddyID)"
+        
+        self.geoFireRef.observeSingleEvent(of: .value, with: { snapshot in
+            let subject = snapshot.hasChild("StudyBuddies/"+self.buddyID)
+            if subject == false{
+                self.checkInButton.setTitle("Check In", for: UIControlState.normal)
+                self.checkedIn = false
+            }else{
+                self.checkInButton.setTitle("Check Out", for: UIControlState.normal)
+                self.checkedIn = true
+            }
+        })
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -142,59 +153,58 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     @IBOutlet weak var checkInButton: UIButton!
     @IBAction func checkInButton(_ sender: UIButton) {
-        self.geoFireRef.observeSingleEvent(of: .value, with: { snapshot in
-            let subject = snapshot.hasChild("StudyBuddies/"+self.buddyID)
-            if subject == false{
-                //1. Create the alert controller.
-                let alert = UIAlertController(title: "Check In", message: "Please Enter Class Number (e.g. CSE 10101)", preferredStyle: .alert)
+        if self.checkedIn == false{
+            //1. Create the alert controller.
+            let alert = UIAlertController(title: "Check In", message: "Please Enter Class Number (e.g. CSE 10101)", preferredStyle: .alert)
                 
-                //2. Add the text field. You can configure it however you need.
-                alert.addTextField { (textField) in
-                    textField.accessibilityHint = "Class Number"
-                }
+            //2. Add the text field. You can configure it however you need.
+            alert.addTextField { (textField) in
+                textField.accessibilityHint = "Class Number"
+            }
                 
-                // 3. Grab the value from the text field, and print it when the user clicks OK.
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
-                    let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-                    // get the current date and time
-                    let currentDateTime = Date()
+            // 3. Grab the value from the text field, and print it when the user clicks OK.
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+                // get the current date and time
+                let currentDateTime = Date()
                     
-                    // initialize the date formatter and set the style
-                    let formatter = DateFormatter()
-                    formatter.timeStyle = .medium
-                    formatter.dateStyle = .long
+                // initialize the date formatter and set the style
+                let formatter = DateFormatter()
+                formatter.timeStyle = .medium
+                formatter.dateStyle = .long
                     
-                    let ID = self.appDelegate.buddyID
+                let ID = self.appDelegate.buddyID
                     
-                    self.addBuddyToStudyBuddies(forLocation: self.uLocation, withID: ID, withSubject: (textField?.text!)!, checkedIn: formatter.string(from: currentDateTime))
+                self.addBuddyToStudyBuddies(forLocation: self.uLocation, withID: ID, withSubject: (textField?.text!)!, checkedIn: formatter.string(from: currentDateTime))
                     
                     sender.setTitle("Check Out", for: .normal)
+                    self.checkedIn = true
                 }))
-                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
-                    print("Cancel")
-                }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
+                print("Cancel")
+            }))
                 
-                // 4. Present the alert.
-                self.present(alert, animated: true, completion: nil)
-            }else{
-                self.geoFireRef.child("StudyBuddies").child(self.buddyID).removeValue { (error, ref) in
-                    if error != nil {
-                        print("error \(error)")
-                    }else{
-                        sender.setTitle("Check In", for: .normal)
-                        var count: Int = 0
-                        for buddy in self.buddies{
-                            if buddy.id == Int(self.buddyID){
-                                self.buddies.remove(at: count)
-                            }
-                            count += 1
+            // 4. Present the alert.
+            self.present(alert, animated: true, completion: nil)
+        }else{
+            self.geoFireRef.child("StudyBuddies").child(self.buddyID).removeValue { (error, ref) in
+                if error != nil {
+                    print("error \(error)")
+                }else{
+                    sender.setTitle("Check In", for: .normal)
+                    var count: Int = 0
+                    for buddy in self.buddies{
+                        if buddy.id == Int(self.buddyID){
+                            self.buddies.remove(at: count)
                         }
-                        self.mapView.removeAnnotations(self.mapView.annotations)
+                        count += 1
                     }
+                    self.mapView.removeAnnotations(self.mapView.annotations)
+                    self.checkedIn = false
+                    self.showBuddiesOnMap(location: self.uLocation)
                 }
-                self.showBuddiesOnMap(location: self.uLocation)
             }
-        })
+        }
     }
     
     func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String){
@@ -218,9 +228,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                         if !self.buddies.contains(newBuddy)
                         {
                             self.buddies.append(newBuddy)
-                        }
-                        else{
-                            self.checkInButton.setTitle("Check Out", for: UIControlState.normal)
                         }
                     })
                 }

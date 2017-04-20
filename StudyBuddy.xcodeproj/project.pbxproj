@@ -81,7 +81,6 @@
 		2BC27AB61E556C1400A6CAC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2BC2B20A1E6B86E30097EF81 /* StudyBuddyAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyBuddyAnnotation.swift; sourceTree = "<group>"; };
 		2BF8DBED1E96E8210032F21D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		2BFC892F1E97EF3E006A6B72 /* Hesburgh Library.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Hesburgh Library.gpx"; sourceTree = "<group>"; };
 		5384CE19E4D6F27911582C26 /* Pods_StudyBuddy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StudyBuddy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B409A438404ECA5736A827C7 /* Pods-StudyBuddy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudyBuddy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-StudyBuddy/Pods-StudyBuddy.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -204,7 +203,6 @@
 			isa = PBXGroup;
 			children = (
 				2BC27AAC1E556C1400A6CAC6 /* ViewController.swift */,
-				2BFC892F1E97EF3E006A6B72 /* Hesburgh Library.gpx */,
 				2B3E72A01E6C8DAB000727B5 /* ContainerViewController.swift */,
 				2B3E72A21E6C8E49000727B5 /* SidePanelViewController.swift */,
 				2B3E72A61E6CAC7C000727B5 /* MessageViewController.swift */,
