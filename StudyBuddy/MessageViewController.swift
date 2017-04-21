@@ -23,6 +23,8 @@ class MessageViewController: UIViewController {
     struct TableView {
         struct CellIdentifiers {
             static let MessageCell = "MessageCell"
+            static let SentRequestCell = "SentRequestCell"
+            static let RequestResponseCell = "RequestResponseCell"
         }
     }
     
@@ -55,9 +57,20 @@ extension MessageViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.MessageCell, for: indexPath) as! MessageCell
-        cell.configureForMessage(messages[indexPath.row])
-        return cell
+        if messages[indexPath.row].message == "Request Sent!"{
+            let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.SentRequestCell, for: indexPath) as! SentRequestCell
+            cell.configureForMessage(messages[indexPath.row])
+            return cell
+
+        }else if messages[indexPath.row].message == "Accepted!"{
+            let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.RequestResponseCell, for: indexPath) as! RequestResponseCell
+            cell.configureForMessage(messages[indexPath.row])
+            return cell
+        }else{
+            let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.MessageCell, for: indexPath) as! MessageCell
+            cell.configureForMessage(messages[indexPath.row])
+            return cell
+        }
     }
     
 }
@@ -68,7 +81,30 @@ class MessageCell: UITableViewCell{
     @IBOutlet weak var buddyMessage: UILabel!
     
     func configureForMessage(_ message: Message){
-        buddyImage.image = UIImage(named: "black_boat.png")
+        buddyImage.image = UIImage(named: message.buddyImage)
         buddyMessage.text = message.message
+    }
+}
+
+class SentRequestCell: UITableViewCell{
+    
+    @IBOutlet weak var buddyImage: UIImageView!
+    @IBOutlet weak var message: UILabel!
+    
+    func configureForMessage(_ inMessage: Message){
+        message.text = "Request Sent!"
+        buddyImage.image = UIImage(named: inMessage.buddyImage)
+    }
+    
+}
+
+class RequestResponseCell: UITableViewCell{
+    
+    @IBOutlet weak var message: UILabel!
+    @IBOutlet weak var imageOfBuddy: UIImageView!
+    
+    func configureForMessage (_ inMessage: Message){
+        message.text = "Accepted!"
+        imageOfBuddy.image = UIImage(named: "green_latern.png")
     }
 }

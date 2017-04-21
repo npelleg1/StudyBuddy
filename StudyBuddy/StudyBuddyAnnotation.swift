@@ -14,11 +14,13 @@ class StudyBuddyAnnotation: NSObject, MKAnnotation {
     var buddyID: Int
     var title: String?
     var subtitle: String?
+    var image: String
     
-    init(coordinate: CLLocationCoordinate2D, buddyID: Int, subject: String, time: String){
+    init(coordinate: CLLocationCoordinate2D, buddyID: Int, subject: String, time: String, image: String){
         self.coordinate = coordinate
         self.buddyID = buddyID
         self.title = subject
         self.subtitle = time
+        self.image = image
     }
 }

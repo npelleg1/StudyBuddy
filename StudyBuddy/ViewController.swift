@@ -33,6 +33,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     var messages = Array<Message>()
     var buddyID: String! = nil
     var checkedIn = false
+    let imageArray = ["green_lantern.png", "brown_fire.png", "yellow_anchor.png", "black_boat.png", "orange_balloon.png", "grey_boot.png", "red_socks.png", "pink_binoculars.png", "purple_canoe.png", "blue_compass.png"]
+    let genIndex: Int = Int(arc4random_uniform(10))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,6 +99,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         // 2
         if annotation is StudyBuddyAnnotation {
             // 3
+            let SBannotation = annotation as! StudyBuddyAnnotation
+            
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
             
             if annotationView == nil {
@@ -109,6 +113,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 let image = UIImage(named: "chat")
                 btn.setImage(image, for: .normal)
                 annotationView!.rightCalloutAccessoryView = btn
+                annotationView!.detailCalloutAccessoryView = UIImageView(image: UIImage(named: SBannotation.image))
             } else {
                 // 6
                 annotationView!.annotation = annotation
@@ -136,7 +141,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let message = textField?.text
             let id = "\(annotation.buddyID)"
-            self.geoFireRef.child("Messages").child(id).updateChildValues(["messages": message, "sentFrom": self.buddyID])
+            self.geoFireRef.child("Messages").child(id).updateChildValues(["messages": message, "sentFrom": self.buddyID, "sentFromImage": self.imageArray[self.genIndex]])
+            self.geoFireRef.child("Messages").child(self.buddyID).updateChildValues(["messages":"Request Sent!", "sentTo": id, "sentToImage": annotation.image])
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
             print("Cancel")
@@ -210,7 +216,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String){
         self.buddyID = "\(buddyId)"
         geoFire.setLocation(location, forKey: self.buddyID)
-        geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time])
+        geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time, "image": imageArray[self.genIndex]])
     }
     
     func showBuddiesOnMap(location: CLLocation){
@@ -222,9 +228,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     self.geoFireRef.observeSingleEvent(of: .value, with: { snapshot in
                         let subject = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/subject").value as! String
                         let time = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/checkInTime").value as! String
-                        let anno = StudyBuddyAnnotation(coordinate: location.coordinate, buddyID: Int(key)!, subject: subject, time: time)
+                        let imageStr = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/image").value as! String
+                        let anno = StudyBuddyAnnotation(coordinate: location.coordinate, buddyID: Int(key)!, subject: subject, time: time, image: imageStr)
                         self.mapView.addAnnotation(anno)
-                        let newBuddy = StudyBuddy(className: subject, checkIn: time, lat: location.coordinate.latitude, lon: location.coordinate.longitude, id: Int(key)!)
+                        let newBuddy = StudyBuddy(className: subject, checkIn: time, lat: location.coordinate.latitude, lon: location.coordinate.longitude, id: Int(key)!, image:imageStr)
                         if !self.buddies.contains(newBuddy)
                         {
                             self.buddies.append(newBuddy)
@@ -239,8 +246,14 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         let refHandle = geoFireRef.child("Messages/"+self.buddyID).observe(FIRDataEventType.value, with: { (snapshot) in
             let postDict = snapshot.value as? [String : String] ?? [:]
             if postDict.count > 0{
-                let newMessage = Message(buddyImage: postDict["sentFrom"]!, message: postDict["messages"]!)
-                self.messages.append(newMessage)
+                if postDict["messages"] == "Request Sent!"{
+                    let newMessage = Message(buddyImage: postDict["sentToImage"]!, message: postDict["messages"]!)
+                    self.messages.append(newMessage)
+                }else if postDict["messages"] == "Accepted!"{
+                }else{
+                    let newMessage = Message(buddyImage: postDict["sentFromImage"]!, message: postDict["messages"]!)
+                    self.messages.append(newMessage)
+                }
             }
         })
     }
