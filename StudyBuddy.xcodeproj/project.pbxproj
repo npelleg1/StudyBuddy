@@ -35,6 +35,7 @@
 		2BC27AB51E556C1400A6CAC6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2BC27AB31E556C1400A6CAC6 /* LaunchScreen.storyboard */; };
 		2BC2B20B1E6B86E30097EF81 /* StudyBuddyAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC2B20A1E6B86E30097EF81 /* StudyBuddyAnnotation.swift */; };
 		2BF8DBEE1E96E8210032F21D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2BF8DBED1E96E8210032F21D /* GoogleService-Info.plist */; };
+		2BFF56321EAA3BC0007B1015 /* Screen Shot 2017-04-21 at 9.07.43 AM.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BFF56311EAA3BC0007B1015 /* Screen Shot 2017-04-21 at 9.07.43 AM.png */; };
 		7F07BE0B5153CA7949F57934 /* Pods_StudyBuddy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5384CE19E4D6F27911582C26 /* Pods_StudyBuddy.framework */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +82,7 @@
 		2BC27AB61E556C1400A6CAC6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2BC2B20A1E6B86E30097EF81 /* StudyBuddyAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StudyBuddyAnnotation.swift; sourceTree = "<group>"; };
 		2BF8DBED1E96E8210032F21D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		2BFF56311EAA3BC0007B1015 /* Screen Shot 2017-04-21 at 9.07.43 AM.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Screen Shot 2017-04-21 at 9.07.43 AM.png"; sourceTree = "<group>"; };
 		5384CE19E4D6F27911582C26 /* Pods_StudyBuddy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_StudyBuddy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B409A438404ECA5736A827C7 /* Pods-StudyBuddy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StudyBuddy.debug.xcconfig"; path = "Pods/Target Support Files/Pods-StudyBuddy/Pods-StudyBuddy.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -138,6 +140,7 @@
 		2BB108A21E6BBFEF00585D3D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2BFF56311EAA3BC0007B1015 /* Screen Shot 2017-04-21 at 9.07.43 AM.png */,
 				2BAC9F2A1EA5DFA700183D06 /* green_lantern.png */,
 				2BAC9F281EA5DFA200183D06 /* brown_fire.png */,
 				2BAC9F261EA5DF7300183D06 /* yellow_anchor.png */,
@@ -300,6 +303,7 @@
 				2BC27AB01E556C1400A6CAC6 /* Main.storyboard in Resources */,
 				2BAC9F291EA5DFA200183D06 /* brown_fire.png in Resources */,
 				2BF8DBEE1E96E8210032F21D /* GoogleService-Info.plist in Resources */,
+				2BFF56321EAA3BC0007B1015 /* Screen Shot 2017-04-21 at 9.07.43 AM.png in Resources */,
 				2BAC9F2B1EA5DFA700183D06 /* green_lantern.png in Resources */,
 				2BAC9F1D1EA5DEEE00183D06 /* pink_binoculars.png in Resources */,
 				2BB108A61E6BC00F00585D3D /* chat.png in Resources */,
