@@ -33,7 +33,6 @@ class MessageViewController: UIViewController {
         
         tableView.reloadData()
     }
-    
 }
 
 extension MessageViewController: UITableViewDelegate {
@@ -54,6 +53,11 @@ extension MessageViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return messages.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+    {
+        return 180.0;//Choose your custom row height
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -79,6 +83,14 @@ class MessageCell: UITableViewCell{
     
     @IBOutlet weak var buddyImage: UIImageView!
     @IBOutlet weak var buddyMessage: UILabel!
+    @IBOutlet weak var acceptButton: UIButton!
+    @IBAction func acceptButton(_ sender: Any) {
+        print("HELLO")
+    }
+    @IBOutlet weak var declineButton: UIButton!
+    @IBAction func declineButton(_ sender: Any) {
+        print("GOODBYE")
+    }
     
     func configureForMessage(_ message: Message){
         buddyImage.image = UIImage(named: message.buddyImage)
