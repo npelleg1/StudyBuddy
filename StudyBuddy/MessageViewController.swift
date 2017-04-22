@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 protocol MessageViewControllerDelegate {
     func messageSelected(_ message: Message)
@@ -16,8 +17,8 @@ class MessageViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
+    var database: FIRDatabaseReference!
     var delegate: MessageViewControllerDelegate?
-    
     var messages: Array<Message>!
     
     struct TableView {
@@ -30,8 +31,8 @@ class MessageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.reloadData()
+        database = FIRDatabase.database().reference()
     }
 }
 

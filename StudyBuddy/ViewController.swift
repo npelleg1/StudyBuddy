@@ -141,8 +141,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let message = textField?.text
             let id = "\(annotation.buddyID)"
-            self.geoFireRef.child("Messages").child(id).updateChildValues(["messages": message, "sentFrom": self.buddyID, "sentFromImage": self.imageArray[self.genIndex]])
-            self.geoFireRef.child("Messages").child(self.buddyID).updateChildValues(["messages":"Request Sent!", "sentTo": id, "sentToImage": annotation.image])
+            self.geoFireRef.child("Messages").child(id).child(self.buddyID).updateChildValues(["messages": message, "sentFrom": self.buddyID, "sentFromImage": self.imageArray[self.genIndex]])
+            self.geoFireRef.child("Messages").child(self.buddyID).child(id).updateChildValues(["messages":"Request Sent!", "sentTo": id, "sentToImage": annotation.image])
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
             print("Cancel")
@@ -244,16 +244,26 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
     func loadMessagesForBuddy(){
         let refHandle = geoFireRef.child("Messages/"+self.buddyID).observe(FIRDataEventType.value, with: { (snapshot) in
-            let postDict = snapshot.value as? [String : String] ?? [:]
-            if postDict.count > 0{
-                if postDict["messages"] == "Request Sent!"{
-                    let newMessage = Message(buddyImage: postDict["sentToImage"]!, message: postDict["messages"]!)
-                    self.messages.append(newMessage)
-                }else if postDict["messages"] == "Accepted!"{
-                }else{
-                    let newMessage = Message(buddyImage: postDict["sentFromImage"]!, message: postDict["messages"]!)
-                    self.messages.append(newMessage)
+            let enumerator = snapshot.children
+            while let rest = enumerator.nextObject() as? FIRDataSnapshot {
+                let newobj=rest.children
+                var newMessage = Message()
+                while let rest1 = newobj.nextObject() as? FIRDataSnapshot {
+                    if rest1.key == "messages" {
+                        if rest1.value as! String == "Request Sent!"{
+                            newMessage.message = "Request Sent!"
+                        } else if rest1.value as! String == "Accepted!"{
+                            newMessage.message = "Accepted!"
+                        } else{
+                            newMessage.message = rest1.value as! String
+                        }
+                    }else if rest1.key == "sentToImage"{
+                        newMessage.buddyImage = rest1.value as! String
+                    }else if rest1.key == "sentFromImage"{
+                        newMessage.buddyImage = rest1.value as! String
+                    }
                 }
+                self.messages.append(newMessage)
             }
         })
     }
