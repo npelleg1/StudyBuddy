@@ -243,6 +243,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     func loadMessagesForBuddy(){
+        self.messages.removeAll()
         let refHandle = geoFireRef.child("Messages/"+self.buddyID).observe(FIRDataEventType.value, with: { (snapshot) in
             let enumerator = snapshot.children
             while let rest = enumerator.nextObject() as? FIRDataSnapshot {
@@ -263,6 +264,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                         newMessage.buddyImage = rest1.value as! String
                     }
                 }
+                newMessage.firstBuddyID = self.buddyID
+                newMessage.secondBuddyID = rest.key
                 self.messages.append(newMessage)
             }
         })
