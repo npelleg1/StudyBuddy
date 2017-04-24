@@ -266,7 +266,16 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 }
                 newMessage.firstBuddyID = self.buddyID
                 newMessage.secondBuddyID = rest.key
-                self.messages.append(newMessage)
+                var isInTable = false
+                for var mess in self.messages{
+                    if mess.secondBuddyID == newMessage.secondBuddyID{
+                        mess.message = newMessage.message
+                        isInTable = true
+                    }
+                }
+                if isInTable == false{
+                    self.messages.append(newMessage)
+                }
             }
         })
     }
@@ -290,7 +299,12 @@ extension ViewController: SidePanelViewControllerDelegate {
 }
 
 extension ViewController: MessageViewControllerDelegate{
+    internal func getCheckedIn() -> Bool {
+        return self.checkedIn
+    }
+
     func messageSelected(_ message: Message) {
+        print("HI")
     }
 }
 

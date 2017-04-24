@@ -11,6 +11,7 @@ import FirebaseDatabase
 
 protocol MessageViewControllerDelegate {
     func messageSelected(_ message: Message)
+    func getCheckedIn()->Bool
 }
 
 class MessageViewController: UIViewController {
@@ -34,17 +35,14 @@ class MessageViewController: UIViewController {
     }
 }
 
-extension MessageViewController: UITableViewDelegate {
+// MARK: Table View Data Source
+
+extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedMessage = messages[indexPath.row]
         delegate?.messageSelected(selectedMessage)
     }
-}
-
-// MARK: Table View Data Source
-
-extension MessageViewController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -57,8 +55,13 @@ extension MessageViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.MessageCell, for: indexPath) as! MessageCell
         cell.configureForMessage(messages[indexPath.row])
+        let isCheckedIn = delegate?.getCheckedIn()
+        if (cell.buddyMessage.text == "Accepted!" || cell.buddyMessage.text == "Request Sent!" || cell.buddyMessage.text == "Declined") || (isCheckedIn == false) {
+            cell.isUserInteractionEnabled = false
+        }
         return cell
     }
+    
     
     func tableView(_ tableView: UITableView, editActionsForRowAt: IndexPath) -> [UITableViewRowAction]? {
         let accept = UITableViewRowAction(style: .normal, title: "Accept") { action, index in
@@ -75,6 +78,8 @@ extension MessageViewController: UITableViewDataSource {
                 let message = textField?.text
                 self.database.child("Messages").child(self.messages[index.row].firstBuddyID).child(self.messages[index.row].secondBuddyID).updateChildValues(["messages": "Accepted!", "sentFrom": self.messages[index.row].secondBuddyID, "sentFromImage": self.messages[index.row].buddyImage])
                 self.database.child("Messages").child(self.messages[index.row].secondBuddyID).child(self.messages[index.row].firstBuddyID).updateChildValues(["messages":message, "sentTo": self.messages[index.row].firstBuddyID])
+                self.messages.remove(at: index.row)
+                tableView.deleteRows(at: [index], with: UITableViewRowAnimation.automatic)
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
                 print("Cancel")
@@ -99,6 +104,8 @@ extension MessageViewController: UITableViewDataSource {
                 let message = textField?.text
                 self.database.child("Messages").child(self.messages[index.row].firstBuddyID).child(self.messages[index.row].secondBuddyID).updateChildValues(["messages": "Declined", "sentFrom": self.messages[index.row].secondBuddyID, "sentFromImage": self.messages[index.row].buddyImage])
                 self.database.child("Messages").child(self.messages[index.row].secondBuddyID).child(self.messages[index.row].firstBuddyID).updateChildValues(["messages":message, "sentTo": self.messages[index.row].firstBuddyID])
+                self.messages.remove(at: index.row)
+                tableView.deleteRows(at: [index], with: UITableViewRowAnimation.automatic)
             }))
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
                 print("Cancel")
