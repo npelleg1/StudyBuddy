@@ -47,7 +47,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         buddyID = "\(self.appDelegate.buddyID)"
         
-        self.geoFireRef.observeSingleEvent(of: .value, with: { snapshot in
+        self.geoFireRef.child("StudyBuddies").observeSingleEvent(of: .value, with: { snapshot in
             let subject = snapshot.hasChild("StudyBuddies/"+self.buddyID)
             if subject == false{
                 self.checkInButton.setTitle("Check In", for: UIControlState.normal)
@@ -155,6 +155,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool){
         let loc = CLLocation(latitude: mapView.centerCoordinate.latitude, longitude: mapView.centerCoordinate.longitude)
         showBuddiesOnMap(location: loc)
+        loadMessagesForBuddy()
     }
     
     @IBOutlet weak var checkInButton: UIButton!
@@ -193,6 +194,23 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             // 4. Present the alert.
             self.present(alert, animated: true, completion: nil)
         }else{
+            self.geoFireRef.child("Messages").child(self.buddyID).removeValue { (error, ref) in
+                if error != nil {
+                    print("error \(error)")
+                }
+            }
+            let refHandle = geoFireRef.child("Messages").observe(FIRDataEventType.value, with: { (snapshot) in
+                let enumerator = snapshot.children
+                while let rest = enumerator.nextObject() as? FIRDataSnapshot {
+                    let newObj = rest.children
+                    while let rest1 = newObj.nextObject() as? FIRDataSnapshot {
+                        if rest1.key == self.buddyID {
+                            self.geoFireRef.child("Messages").child(rest.key).child(rest1.key).removeValue{ (error, ref) in
+                            }
+                        }
+                    }
+                }
+            })
             self.geoFireRef.child("StudyBuddies").child(self.buddyID).removeValue { (error, ref) in
                 if error != nil {
                     print("error \(error)")
@@ -208,6 +226,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     self.mapView.removeAnnotations(self.mapView.annotations)
                     self.checkedIn = false
                     self.showBuddiesOnMap(location: self.uLocation)
+                    self.loadMessagesForBuddy()
                 }
             }
         }
@@ -220,6 +239,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     func showBuddiesOnMap(location: CLLocation){
+        self.mapView.removeAnnotations(self.mapView.annotations)
+        self.buddies.removeAll()
         let circleQuery = geoFire!.query(at: location, withRadius: 3)
         _ = circleQuery?.observe(GFEventType.keyEntered, with: {
             (key, location) in
