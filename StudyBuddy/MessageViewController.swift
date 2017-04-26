@@ -83,7 +83,7 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
             }
             
             // 3. Grab the value from the text field, and print it when the user clicks OK.
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+            alert.addAction(UIAlertAction(title: "Accept", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 let message = textField?.text
                 self.database.child("Messages").child(self.messages[index.row].firstBuddyID).child(self.messages[index.row].secondBuddyID).updateChildValues(["messages": "Accepted!", "sentFrom": self.messages[index.row].secondBuddyID, "sentFromImage": self.messages[index.row].buddyImage])
@@ -109,7 +109,7 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
             }
             
             // 3. Grab the value from the text field, and print it when the user clicks OK.
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+            alert.addAction(UIAlertAction(title: "Decline", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 let message = textField?.text
                 self.database.child("Messages").child(self.messages[index.row].firstBuddyID).child(self.messages[index.row].secondBuddyID).updateChildValues(["messages": "Declined", "sentFrom": self.messages[index.row].secondBuddyID, "sentFromImage": self.messages[index.row].buddyImage])

@@ -137,7 +137,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
         
         // 3. Grab the value from the text field, and print it when the user clicks OK.
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+        alert.addAction(UIAlertAction(title: "Send", style: .default, handler: { [weak alert] (_) in
             let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
             let message = textField?.text
             let id = "\(annotation.buddyID)"
@@ -162,7 +162,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     @IBAction func checkInButton(_ sender: UIButton) {
         if self.checkedIn == false{
             //1. Create the alert controller.
-            let alert = UIAlertController(title: "Check In", message: "Please Enter Class Number (e.g. CSE 10101)", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Check In", message: "Please Enter Class Name", preferredStyle: .alert)
                 
             //2. Add the text field. You can configure it however you need.
             alert.addTextField { (textField) in
@@ -170,7 +170,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             }
                 
             // 3. Grab the value from the text field, and print it when the user clicks OK.
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { [weak alert] (_) in
+            alert.addAction(UIAlertAction(title: "Check In", style: .default, handler: { [weak alert] (_) in
                 let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
                 // get the current date and time
                 let currentDateTime = Date()
