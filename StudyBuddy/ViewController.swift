@@ -48,7 +48,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         buddyID = "\(self.appDelegate.buddyID)"
         
         self.geoFireRef.child("StudyBuddies").observeSingleEvent(of: .value, with: { snapshot in
-            let subject = snapshot.hasChild("StudyBuddies/"+self.buddyID)
+            let subject = snapshot.hasChild(self.buddyID)
             if subject == false{
                 self.checkInButton.setTitle("Check In", for: UIControlState.normal)
                 self.checkedIn = false
