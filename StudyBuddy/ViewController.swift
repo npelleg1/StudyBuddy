@@ -189,6 +189,9 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     sender.setTitle("Check Out", for: .normal)
                     self.checkedIn = true
                 }))
+            
+            var timer = Timer.scheduledTimer(timeInterval: 43200, target: self, selector: #selector(self.checkOutMethod), userInfo: nil, repeats: false);
+            
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
                 print("Cancel")
             }))
@@ -196,44 +199,48 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             // 4. Present the alert.
             self.present(alert, animated: true, completion: nil)
         }else{
-            self.geoFireRef.child("Messages").child(self.buddyID).removeValue { (error, ref) in
-                if error != nil {
-                    print("error \(error)")
-                }
-            }
-            let refHandle = geoFireRef.child("Messages").observe(FIRDataEventType.value, with: { (snapshot) in
-                let enumerator = snapshot.children
-                while let rest = enumerator.nextObject() as? FIRDataSnapshot {
-                    let newObj = rest.children
-                    while let rest1 = newObj.nextObject() as? FIRDataSnapshot {
-                        if rest1.key == self.buddyID {
-                            self.geoFireRef.child("Messages").child(rest.key).child(rest1.key).removeValue{ (error, ref) in
-                            }
-                        }
-                    }
-                }
-            })
-            self.geoFireRef.child("StudyBuddies").child(self.buddyID).removeValue { (error, ref) in
-                if error != nil {
-                    print("error \(error)")
-                }else{
-                    sender.setTitle("Check In", for: .normal)
-                    var count: Int = 0
-                    for buddy in self.buddies{
-                        if buddy.id == Int(self.buddyID){
-                            self.buddies.remove(at: count)
-                        }
-                        count += 1
-                    }
-                    self.mapView.removeAnnotations(self.mapView.annotations)
-                    self.checkedIn = false
-                    self.showBuddiesOnMap(location: self.uLocation)
-                    self.loadMessagesForBuddy()
-                }
-            }
+            checkOutMethod()
         }
     }
     
+    func checkOutMethod(){
+        self.geoFireRef.child("Messages").child(self.buddyID).removeValue { (error, ref) in
+            if error != nil {
+                print("error \(error)")
+            }
+        }
+        geoFireRef.child("Messages").observe(FIRDataEventType.value, with: { (snapshot) in
+            let enumerator = snapshot.children
+            while let rest = enumerator.nextObject() as? FIRDataSnapshot {
+                let newObj = rest.children
+                while let rest1 = newObj.nextObject() as? FIRDataSnapshot {
+                    if rest1.key == self.buddyID {
+                        self.geoFireRef.child("Messages").child(rest.key).child(rest1.key).removeValue{ (error, ref) in
+                        }
+                    }
+                }
+            }
+        })
+        self.geoFireRef.child("StudyBuddies").child(self.buddyID).removeValue { (error, ref) in
+            if error != nil {
+                print("error \(error)")
+            }else{
+                self.checkInButton.setTitle("Check In", for: .normal)
+                var count: Int = 0
+                for buddy in self.buddies{
+                    if buddy.id == Int(self.buddyID){
+                        self.buddies.remove(at: count)
+                    }
+                    count += 1
+                }
+                self.mapView.removeAnnotations(self.mapView.annotations)
+                self.checkedIn = false
+                self.showBuddiesOnMap(location: self.uLocation)
+                self.loadMessagesForBuddy()
+            }
+        }
+    }
+
     func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String){
         self.buddyID = "\(buddyId)"
         geoFire.setLocation(location, forKey: self.buddyID)
