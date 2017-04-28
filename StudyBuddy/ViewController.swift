@@ -47,6 +47,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         buddyID = "\(self.appDelegate.buddyID)"
         
+        locationManager.delegate = self
+        
         self.geoFireRef.child("StudyBuddies").observeSingleEvent(of: .value, with: { snapshot in
             let subject = snapshot.hasChild(self.buddyID)
             if subject == false{
