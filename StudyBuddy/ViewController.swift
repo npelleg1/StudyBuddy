@@ -59,6 +59,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                 self.checkedIn = true
             }
         })
+        
+        mapView.mapType = .hybridFlyover
+        mapView.showsScale = true
+        mapView.showsBuildings  = true
+        mapView.showsCompass = true
+        mapView.showsPointsOfInterest = true
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -334,7 +340,6 @@ extension ViewController: MessageViewControllerDelegate{
     }
 
     func messageSelected(_ message: Message) {
-        print("HI")
     }
 }
 
