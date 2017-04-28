@@ -60,11 +60,22 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             }
         })
         
-        mapView.mapType = .hybridFlyover
         mapView.showsScale = true
         mapView.showsBuildings  = true
         mapView.showsCompass = true
         mapView.showsPointsOfInterest = true
+    }
+    
+    @IBOutlet weak var mapSegmentedControl: UISegmentedControl!
+    @IBAction func indexChanged(_ sender: Any) {
+        switch mapSegmentedControl.selectedSegmentIndex{
+            case 0:
+                mapView.mapType = .standard
+            case 1:
+                mapView.mapType = .hybridFlyover
+            default:
+                break;
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {

@@ -24,8 +24,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="mIX-tX-JQk">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="480"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="mIX-tX-JQk">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             </mapView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FPI-dJ-jTF">
                                 <rect key="frame" x="16" y="506" width="288" height="42"/>
@@ -35,16 +35,30 @@
                                     <action selector="checkInButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6kR-8S-MMP"/>
                                 </connections>
                             </button>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="07A-mp-1Vo">
+                                <rect key="frame" x="100" y="470" width="121" height="29"/>
+                                <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <segments>
+                                    <segment title="Map"/>
+                                    <segment title="Satellite"/>
+                                </segments>
+                                <connections>
+                                    <action selector="indexChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="2uj-Uz-o1h"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="mIX-tX-JQk" secondAttribute="trailing" id="08k-d3-NfZ"/>
-                            <constraint firstItem="mIX-tX-JQk" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="7BT-ve-e59"/>
-                            <constraint firstItem="FPI-dJ-jTF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="V28-Ic-gvk"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="FPI-dJ-jTF" secondAttribute="bottom" constant="20" id="XqO-C1-efQ"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="mIX-tX-JQk" secondAttribute="bottom" id="agv-xK-tng"/>
-                            <constraint firstItem="FPI-dJ-jTF" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="dbU-6I-wDl"/>
-                            <constraint firstItem="mIX-tX-JQk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="oaS-QV-w2e"/>
+                            <constraint firstItem="mIX-tX-JQk" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="1gd-27-SwW"/>
+                            <constraint firstItem="FPI-dJ-jTF" firstAttribute="top" secondItem="07A-mp-1Vo" secondAttribute="bottom" constant="8" symbolic="YES" id="Sfp-7l-80C"/>
+                            <constraint firstAttribute="bottom" secondItem="FPI-dJ-jTF" secondAttribute="bottom" constant="20" symbolic="YES" id="UJI-xA-Smm"/>
+                            <constraint firstItem="mIX-tX-JQk" firstAttribute="centerX" secondItem="07A-mp-1Vo" secondAttribute="centerX" id="atL-NN-eUe"/>
+                            <constraint firstItem="07A-mp-1Vo" firstAttribute="centerX" secondItem="FPI-dJ-jTF" secondAttribute="centerX" id="cNv-Qn-HGb"/>
+                            <constraint firstItem="07A-mp-1Vo" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="84" id="pF2-fL-V1Z"/>
+                            <constraint firstItem="mIX-tX-JQk" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="pMd-mL-LnG"/>
+                            <constraint firstAttribute="trailing" secondItem="mIX-tX-JQk" secondAttribute="trailing" id="sPs-zz-HuY"/>
+                            <constraint firstItem="FPI-dJ-jTF" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="vZm-wD-k4N"/>
+                            <constraint firstItem="mIX-tX-JQk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="xHf-BT-1fl"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="StudyBuddy" id="pJc-ky-fpl">
@@ -63,12 +77,13 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="checkInButton" destination="FPI-dJ-jTF" id="G2F-pF-g8G"/>
+                        <outlet property="mapSegmentedControl" destination="07A-mp-1Vo" id="5fP-Pa-do6"/>
                         <outlet property="mapView" destination="mIX-tX-JQk" id="Wbs-vL-V6a"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1132.5" y="135"/>
+            <point key="canvasLocation" x="1132.5" y="134.1549295774648"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="95S-4E-Gcy">
@@ -118,7 +133,7 @@
                                         <rect key="frame" x="0.0" y="22" width="304" height="117"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wIw-Ka-9OM" id="aQf-rU-5iz">
-                                            <rect key="frame" x="0.0" y="0.0" width="304" height="117"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="304" height="116.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lAs-8a-N3y">
@@ -224,7 +239,7 @@
                                         <rect key="frame" x="0.0" y="22" width="304" height="101"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ppB-0R-2X4" id="a3V-wy-DCt">
-                                            <rect key="frame" x="0.0" y="0.0" width="304" height="101"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="304" height="100.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Message" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="6" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m8S-Wj-gGr">
