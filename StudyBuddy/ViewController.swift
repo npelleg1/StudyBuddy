@@ -207,8 +207,6 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                     self.checkedIn = true
                 }))
             
-            var timer = Timer.scheduledTimer(timeInterval: 43200, target: self, selector: #selector(self.checkOutMethod), userInfo: nil, repeats: false);
-            
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
                 print("Cancel")
             }))
