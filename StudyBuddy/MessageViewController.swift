@@ -35,8 +35,6 @@ class MessageViewController: UIViewController {
     }
 }
 
-// MARK: Table View Data Source
-
 extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -77,17 +75,18 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
         let accept = UITableViewRowAction(style: .normal, title: "Accept") { action, index in
             let alert = UIAlertController(title: "Accept Request?", message: "Send a Custom Message!", preferredStyle: .alert)
             
-            //2. Add the text field. You can configure it however you need.
             alert.addTextField { (textField) in
                 textField.placeholder = "Sure! See you soon."
             }
             
-            // 3. Grab the value from the text field, and print it when the user clicks OK.
             alert.addAction(UIAlertAction(title: "Accept", style: .default, handler: { [weak alert] (_) in
-                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+                let textField = alert?.textFields![0]
                 let message = textField?.text
+                
                 self.database.child("Messages").child(self.messages[index.row].firstBuddyID).child(self.messages[index.row].secondBuddyID).updateChildValues(["messages": "Accepted!", "sentFrom": self.messages[index.row].secondBuddyID, "sentFromImage": self.messages[index.row].buddyImage])
+                
                 self.database.child("Messages").child(self.messages[index.row].secondBuddyID).child(self.messages[index.row].firstBuddyID).updateChildValues(["messages":message, "sentTo": self.messages[index.row].firstBuddyID])
+                
                 self.messages.remove(at: index.row)
                 tableView.deleteRows(at: [index], with: UITableViewRowAnimation.automatic)
             }))
@@ -95,7 +94,6 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
                 print("Cancel")
             }))
             
-            // 4. Present the alert.
             self.present(alert, animated: true, completion: nil)
         }
         accept.backgroundColor = .green
@@ -103,17 +101,18 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
         let decline = UITableViewRowAction(style: .normal, title: "Decline") { action, index in
             let alert = UIAlertController(title: "Decline Request?", message: "Leave an Explanation Why", preferredStyle: .alert)
             
-            //2. Add the text field. You can configure it however you need.
             alert.addTextField { (textField) in
                 textField.placeholder = "Sorry, ran out of room at the table."
             }
             
-            // 3. Grab the value from the text field, and print it when the user clicks OK.
             alert.addAction(UIAlertAction(title: "Decline", style: .default, handler: { [weak alert] (_) in
-                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+                let textField = alert?.textFields![0]
                 let message = textField?.text
+                
                 self.database.child("Messages").child(self.messages[index.row].firstBuddyID).child(self.messages[index.row].secondBuddyID).updateChildValues(["messages": "Declined", "sentFrom": self.messages[index.row].secondBuddyID, "sentFromImage": self.messages[index.row].buddyImage])
+                
                 self.database.child("Messages").child(self.messages[index.row].secondBuddyID).child(self.messages[index.row].firstBuddyID).updateChildValues(["messages":message, "sentTo": self.messages[index.row].firstBuddyID])
+                
                 self.messages.remove(at: index.row)
                 tableView.deleteRows(at: [index], with: UITableViewRowAnimation.automatic)
             }))
@@ -121,7 +120,6 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
                 print("Cancel")
             }))
             
-            // 4. Present the alert.
             self.present(alert, animated: true, completion: nil)
         }
         decline.backgroundColor = .red

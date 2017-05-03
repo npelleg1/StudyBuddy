@@ -5,6 +5,9 @@
 //  Created by Nick Pellegrino on 3/5/17.
 //  Copyright © 2017 Nick Pellegrino. All rights reserved.
 //
+// This code almost entirely comes from the Ray Wenderlich tutorial cited in the Credits for Code
+// section of the report
+
 
 import UIKit
 import QuartzCore

@@ -49,6 +49,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         
         locationManager.delegate = self
         
+        // read database to see if this user is checked in based on its buddyID
         self.geoFireRef.child("StudyBuddies").observeSingleEvent(of: .value, with: { snapshot in
             let subject = snapshot.hasChild(self.buddyID)
             if subject == false{
@@ -66,6 +67,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         mapView.showsPointsOfInterest = true
     }
     
+    // code to control the segmented control for the map view
     @IBOutlet weak var mapSegmentedControl: UISegmentedControl!
     @IBAction func indexChanged(_ sender: Any) {
         switch mapSegmentedControl.selectedSegmentIndex{
@@ -78,10 +80,12 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
     }
     
+    // enter locationAuth process when the view appears
     override func viewDidAppear(_ animated: Bool) {
         locationAuthStatus()
     }
     
+    // if authorized, show location. Otherwise, request authorization via pop-up screen
     func locationAuthStatus(){
         if CLLocationManager.authorizationStatus() == .authorizedWhenInUse{
             mapView.showsUserLocation = true
@@ -90,17 +94,20 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
     }
     
+    // centers map view above a passed-in location
     func centerMapOnLocation(location: CLLocation){
         let coordinateRegion = MKCoordinateRegionMakeWithDistance(location.coordinate, regionRadius*2, regionRadius*2)
         mapView.setRegion(coordinateRegion, animated: true)
     }
 
+    // called when user first installs app and approves the request for location
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         if status == .authorizedWhenInUse{
             mapView.showsUserLocation = true
         }
     }
 
+    // when the user moves, call this function to keep map and messages up-to-date
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation){
         uLocation = userLocation.location!
         if mapHasCenteredOnce == false{
@@ -111,6 +118,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
     }
     
+    // code which controls the annotations (pins) on the map
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         let identifier = "StudyBuddyAnnotation"
         if annotation is StudyBuddyAnnotation {
@@ -132,6 +140,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         return nil
     }
     
+    // code for when an annotation is tapped and displays the callout
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         let annotation = view.annotation as! StudyBuddyAnnotation
         let alert = UIAlertController(title: "StudyBuddy Request", message: "Send a Request!", preferredStyle: .alert)
@@ -144,6 +153,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             let textField = alert?.textFields![0]
             let message = textField?.text
             let id = "\(annotation.buddyID)"
+            
+            // Messaging functionality is achieved by updating both the sender and receiver's Firebase
+            // data; The first ID in the function calls refer to the buddyID of the user who will view
+            // this message, and the second buddyID is for the other user
             self.geoFireRef.child("Messages").child(id).child(self.buddyID).updateChildValues(["messages": message, "sentFrom": self.buddyID, "sentFromImage": self.imageArray[self.genIndex]])
         self.geoFireRef.child("Messages").child(self.buddyID).child(id).updateChildValues(["messages":"Request Sent!", "sentTo": id, "sentToImage": annotation.image])
         }))
@@ -154,12 +167,14 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         self.present(alert, animated: true, completion: nil)
     }
     
+    // called when the user scrolls on the map, keeps map and messsages up to date
     func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool){
         let loc = CLLocation(latitude: mapView.centerCoordinate.latitude, longitude: mapView.centerCoordinate.longitude)
         showBuddiesOnMap(location: loc)
         loadMessagesForBuddy()
     }
     
+    // code controlling the check-in/check-out button
     @IBOutlet weak var checkInButton: UIButton!
     @IBAction func checkInButton(_ sender: UIButton) {
         if self.checkedIn == false{
@@ -187,14 +202,15 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
                 print("Cancel")
             }))
-                
-            // 4. Present the alert.
+            
             self.present(alert, animated: true, completion: nil)
         }else{
             checkOutMethod()
         }
     }
     
+    // this function specifically handles checking out a StudyBuddy. It deletes the StudyBuddy, removes
+    // the buddy's requests and replies, and removes all messages sent to the buddy on other devices
     func checkOutMethod(){
         self.geoFireRef.child("Messages").child(self.buddyID).removeValue { (error, ref) in
             if error != nil {
@@ -233,12 +249,15 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
     }
 
+    // this code specifically adds a new StudyBuddy to the Firebase backend
     func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String, onFloor floor: String){
         self.buddyID = "\(buddyId)"
         geoFire.setLocation(location, forKey: self.buddyID)
         geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time, "image": imageArray[self.genIndex], "count": 0, "floorNumber": floor])
     }
     
+    // this code loads all Studybuddies, displays them on the map, and populates the needed data for the 
+    // left side navigation when the "Buddies" button is pressed
     func showBuddiesOnMap(location: CLLocation){
         self.mapView.removeAnnotations(self.mapView.annotations)
         self.buddies.removeAll()
@@ -265,6 +284,8 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         })
     }
     
+    // this code controls loading the messages for a user, which is shown when a user presses on the 
+    // "Requests" button
     func loadMessagesForBuddy(){
         self.messages.removeAll()
         let refHandle = geoFireRef.child("Messages/"+self.buddyID).observe(FIRDataEventType.value, with: { (snapshot) in
@@ -313,9 +334,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     
 }
 
+// code which controls when a StudyBuddy is pressed from the left table view
 extension ViewController: SidePanelViewControllerDelegate {
-    func animalSelected(_ animal: StudyBuddy) {
-        let centerLocation = CLLocation(latitude: animal.lat, longitude: animal.lon)
+    func buddySelected(_ buddy: StudyBuddy) {
+        let centerLocation = CLLocation(latitude: buddy.lat, longitude: buddy.lon)
         centerMapOnLocation(location: centerLocation)
         delegate?.collapseSidePanels?()
     }

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SidePanelViewControllerDelegate {
-    func animalSelected(_ studyBuddy: StudyBuddy)
+    func buddySelected(_ studyBuddy: StudyBuddy)
 }
 
 class SidePanelViewController: UIViewController {
@@ -22,7 +22,7 @@ class SidePanelViewController: UIViewController {
     
     struct TableView {
         struct CellIdentifiers {
-            static let AnimalCell = "AnimalCell"
+            static let BuddyCell = "BuddyCell"
         }
     }
     
@@ -37,12 +37,10 @@ class SidePanelViewController: UIViewController {
 extension SidePanelViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedAnimal = studyBuddies[indexPath.row]
-        delegate?.animalSelected(selectedAnimal)
+        let selectedBuddy = studyBuddies[indexPath.row]
+        delegate?.buddySelected(selectedBuddy)
     }
 }
-
-// MARK: Table View Data Source
 
 extension SidePanelViewController: UITableViewDataSource {
     
@@ -65,21 +63,21 @@ extension SidePanelViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.AnimalCell, for: indexPath) as! AnimalCell
-        cell.configureForAnimal(studyBuddies[indexPath.row])
+        let cell = tableView.dequeueReusableCell(withIdentifier: TableView.CellIdentifiers.BuddyCell, for: indexPath) as! BuddyCell
+        cell.configureForBuddy(studyBuddies[indexPath.row])
         return cell
     }
     
 }
 
-class AnimalCell: UITableViewCell {
+class BuddyCell: UITableViewCell {
     
     @IBOutlet weak var imageNameLabel: UILabel!
     @IBOutlet weak var imageCreatorLabel: UILabel!
     @IBOutlet weak var imageViewOnSide: UIImageView!
     @IBOutlet weak var floorLabel: UILabel!
     
-    func configureForAnimal(_ studyBuddy: StudyBuddy) {
+    func configureForBuddy(_ studyBuddy: StudyBuddy) {
         imageNameLabel.text = studyBuddy.className
         imageCreatorLabel.text = studyBuddy.checkIn
         imageViewOnSide.image = UIImage(named: studyBuddy.image)
