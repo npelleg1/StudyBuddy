@@ -77,11 +77,13 @@ class AnimalCell: UITableViewCell {
     @IBOutlet weak var imageNameLabel: UILabel!
     @IBOutlet weak var imageCreatorLabel: UILabel!
     @IBOutlet weak var imageViewOnSide: UIImageView!
+    @IBOutlet weak var floorLabel: UILabel!
     
     func configureForAnimal(_ studyBuddy: StudyBuddy) {
         imageNameLabel.text = studyBuddy.className
         imageCreatorLabel.text = studyBuddy.checkIn
         imageViewOnSide.image = UIImage(named: studyBuddy.image)
+        floorLabel.text = studyBuddy.floorNumber
     }
     
 }

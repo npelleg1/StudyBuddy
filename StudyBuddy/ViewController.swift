@@ -112,62 +112,45 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     }
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        // 1
         let identifier = "StudyBuddyAnnotation"
-        
-        // 2
         if annotation is StudyBuddyAnnotation {
-            // 3
             let SBannotation = annotation as! StudyBuddyAnnotation
-            
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-            
             if annotationView == nil {
-                //4
                 annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
                 annotationView!.canShowCallout = true
-                
-                // 5
                 let btn  = UIButton(type: .contactAdd)
                 let image = UIImage(named: "chat")
                 btn.setImage(image, for: .normal)
                 annotationView!.rightCalloutAccessoryView = btn
                 annotationView!.detailCalloutAccessoryView = UIImageView(image: UIImage(named: SBannotation.image))
             } else {
-                // 6
                 annotationView!.annotation = annotation
             }
-            
             return annotationView
         }
-        
-        // 7
         return nil
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        //1. Create the alert controller.
         let annotation = view.annotation as! StudyBuddyAnnotation
         let alert = UIAlertController(title: "StudyBuddy Request", message: "Send a Request!", preferredStyle: .alert)
         
-        //2. Add the text field. You can configure it however you need.
         alert.addTextField { (textField) in
-            textField.accessibilityHint = "Send a StudyBuddy Request!"
+            textField.placeholder = "Write a Custom Message"
         }
         
-        // 3. Grab the value from the text field, and print it when the user clicks OK.
         alert.addAction(UIAlertAction(title: "Send", style: .default, handler: { [weak alert] (_) in
-            let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
+            let textField = alert?.textFields![0]
             let message = textField?.text
             let id = "\(annotation.buddyID)"
             self.geoFireRef.child("Messages").child(id).child(self.buddyID).updateChildValues(["messages": message, "sentFrom": self.buddyID, "sentFromImage": self.imageArray[self.genIndex]])
-            self.geoFireRef.child("Messages").child(self.buddyID).child(id).updateChildValues(["messages":"Request Sent!", "sentTo": id, "sentToImage": annotation.image])
+        self.geoFireRef.child("Messages").child(self.buddyID).child(id).updateChildValues(["messages":"Request Sent!", "sentTo": id, "sentToImage": annotation.image])
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
             print("Cancel")
         }))
         
-        // 4. Present the alert.
         self.present(alert, animated: true, completion: nil)
     }
     
@@ -180,32 +163,26 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     @IBOutlet weak var checkInButton: UIButton!
     @IBAction func checkInButton(_ sender: UIButton) {
         if self.checkedIn == false{
-            //1. Create the alert controller.
-            let alert = UIAlertController(title: "Check In", message: "Please Enter Class Name", preferredStyle: .alert)
-                
-            //2. Add the text field. You can configure it however you need.
+            let alert = UIAlertController(title: "Check In", message: "Please Enter Class Name and Floor Number", preferredStyle: .alert)
             alert.addTextField { (textField) in
-                textField.accessibilityHint = "Class Number"
+                textField.placeholder = "Class Name"
             }
-                
-            // 3. Grab the value from the text field, and print it when the user clicks OK.
+            alert.addTextField{(textField2) in
+                textField2.placeholder = "Enter Floor Number"
+            }
             alert.addAction(UIAlertAction(title: "Check In", style: .default, handler: { [weak alert] (_) in
-                let textField = alert?.textFields![0] // Force unwrapping because we know it exists.
-                // get the current date and time
+                let textField = alert?.textFields![0]
+                let textField2 = alert?.textFields![1]
                 let currentDateTime = Date()
-                    
-                // initialize the date formatter and set the style
+                let floorNumber = textField2?.text
                 let formatter = DateFormatter()
                 formatter.timeStyle = .medium
                 formatter.dateStyle = .long
-                    
                 let ID = self.appDelegate.buddyID
-                    
-                self.addBuddyToStudyBuddies(forLocation: self.uLocation, withID: ID, withSubject: (textField?.text!)!, checkedIn: formatter.string(from: currentDateTime))
-                    
-                    sender.setTitle("Check Out", for: .normal)
-                    self.checkedIn = true
-                }))
+                self.addBuddyToStudyBuddies(forLocation: self.uLocation, withID: ID, withSubject: (textField?.text!)!, checkedIn: formatter.string(from: currentDateTime), onFloor: floorNumber!)
+                sender.setTitle("Check Out", for: .normal)
+                self.checkedIn = true
+            }))
             
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: {[weak alert] (_) in
                 print("Cancel")
@@ -256,10 +233,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
         }
     }
 
-    func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String){
+    func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String, onFloor floor: String){
         self.buddyID = "\(buddyId)"
         geoFire.setLocation(location, forKey: self.buddyID)
-        geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time, "image": imageArray[self.genIndex], "count": 0])
+        geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time, "image": imageArray[self.genIndex], "count": 0, "floorNumber": floor])
     }
     
     func showBuddiesOnMap(location: CLLocation){
@@ -274,9 +251,10 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
                         let subject = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/subject").value as! String
                         let time = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/checkInTime").value as! String
                         let imageStr = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/image").value as! String
+                        let floor = snapshot.childSnapshot(forPath: "StudyBuddies/"+key+"/floorNumber").value as! String
                         let anno = StudyBuddyAnnotation(coordinate: location.coordinate, buddyID: Int(key)!, subject: subject, time: time, image: imageStr)
                         self.mapView.addAnnotation(anno)
-                        let newBuddy = StudyBuddy(className: subject, checkIn: time, lat: location.coordinate.latitude, lon: location.coordinate.longitude, id: Int(key)!, image:imageStr)
+                        let newBuddy = StudyBuddy(className: subject, checkIn: time, lat: location.coordinate.latitude, lon: location.coordinate.longitude, id: Int(key)!, image:imageStr, floorNumber: floor)
                         if !self.buddies.contains(newBuddy)
                         {
                             self.buddies.append(newBuddy)

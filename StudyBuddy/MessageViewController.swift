@@ -79,7 +79,7 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
             
             //2. Add the text field. You can configure it however you need.
             alert.addTextField { (textField) in
-                textField.accessibilityHint = "Sure! See you soon."
+                textField.placeholder = "Sure! See you soon."
             }
             
             // 3. Grab the value from the text field, and print it when the user clicks OK.
@@ -105,7 +105,7 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
             
             //2. Add the text field. You can configure it however you need.
             alert.addTextField { (textField) in
-                textField.accessibilityHint = "Sorry, ran out of room at the table."
+                textField.placeholder = "Sorry, ran out of room at the table."
             }
             
             // 3. Grab the value from the text field, and print it when the user clicks OK.
