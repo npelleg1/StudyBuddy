@@ -259,7 +259,7 @@ class ViewController: UIViewController, MKMapViewDelegate, CLLocationManagerDele
     func addBuddyToStudyBuddies(forLocation location: CLLocation, withID buddyId: Int, withSubject subject: String, checkedIn time: String){
         self.buddyID = "\(buddyId)"
         geoFire.setLocation(location, forKey: self.buddyID)
-        geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time, "image": imageArray[self.genIndex]])
+        geoFireRef.child("StudyBuddies").child(self.buddyID).updateChildValues(["subject": subject, "checkInTime": time, "image": imageArray[self.genIndex], "count": 0])
     }
     
     func showBuddiesOnMap(location: CLLocation){
